@@ -6,17 +6,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.paging.PagingData
 import com.ishanknijhawan.tubearhai.R
 import com.ishanknijhawan.tubearhai.data.Beer
-import com.ishanknijhawan.tubearhai.viewmodel.BeerListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BeerListFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = BeerListFragment()
-    }
-
-    private lateinit var viewModel: BeerListViewModel
+    private val mViewModel by viewModels<BeerListViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,7 +31,10 @@ class BeerListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(BeerListViewModel::class.java)
+        //mViewModel = ViewModelProvider(this).get(BeerListViewModel::class.java)
+        mViewModel.beers.observe(viewLifecycleOwner, Observer {
+
+        })
     }
 
 }
