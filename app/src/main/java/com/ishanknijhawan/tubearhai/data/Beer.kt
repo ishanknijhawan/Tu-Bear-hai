@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class Beer(
     val abv: Double,
     @SerializedName("attenuation_level")
-    val attenuationLevel: Int,
+    val attenuationLevel: Double,
     @SerializedName("boil_volume")
     val boilVolume: BoilVolume,
     @SerializedName("brewers_tips")
@@ -13,31 +13,31 @@ data class Beer(
     @SerializedName("contributed_by")
     val contributedBy: String,
     val description: String,
-    val ebc: Int,
+    val ebc: Double,
     @SerializedName("first_brewed")
     val firstBrewed: String,
     @SerializedName("food_pairing")
     val foodPairing: List<String>,
-    val ibu: Int,
-    val id: Int,
+    val ibu: Double,
+    val id: Double,
     @SerializedName("image_url")
     val imageUrl: String,
     val ingredients: Ingredients,
     val method: Method,
     val name: String,
     val ph: Double,
-    val srm: Int,
+    val srm: Double,
     val tagline: String,
     @SerializedName("target_fg")
-    val targetFg: Int,
+    val targetFg: Double,
     @SerializedName("target_og")
-    val targetOg: Int,
+    val targetOg: Double,
     val volume: Volume
 )
 
 data class Amount(
     val unit: String,
-    val value: Int
+    val value: Double
 )
 
 data class Hop(
@@ -54,7 +54,7 @@ data class AmountX(
 
 data class BoilVolume(
     val unit: String,
-    val value: Int
+    val value: Double
 )
 
 data class Fermentation(
@@ -73,7 +73,7 @@ data class Malt(
 )
 
 data class MashTemp(
-    val duration: Int,
+    val duration: Double,
     val temp: TempX
 )
 
@@ -86,15 +86,15 @@ data class Method(
 
 data class Temp(
     val unit: String,
-    val value: Int
+    val value: Double
 )
 
 data class TempX(
     val unit: String,
-    val value: Int
+    val value: Double
 )
 
 data class Volume(
     val unit: String,
-    val value: Int
+    val value: Double
 )

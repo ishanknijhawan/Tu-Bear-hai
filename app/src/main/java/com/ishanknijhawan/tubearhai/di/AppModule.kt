@@ -16,7 +16,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit = Retrofit.Builder().baseUrl(BeerApi.BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create()).build()
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
     @Provides
     @Singleton

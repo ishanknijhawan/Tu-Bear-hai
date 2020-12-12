@@ -1,9 +1,11 @@
 package com.ishanknijhawan.tubearhai.data
 
+import android.util.Log
 import androidx.paging.PagingSource
 import com.ishanknijhawan.tubearhai.api.BeerApi
 import retrofit2.HttpException
 import java.io.IOException
+
 
 const val PAGING_INDEX = 1
 
@@ -12,8 +14,14 @@ class BeerPaging(private val beerApi: BeerApi) :
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Beer> {
         val position = params.key ?: PAGING_INDEX
         return try {
+            Log.d("GSON", "coming here Yo!!")
+
             val response = beerApi.getBeers(position, params.loadSize)
-            val beers = response.results
+            val beers = response.body()!!
+
+            Log.d("GSON", "json result is $response")
+            Log.d("GSON", "result is $beers")
+
             LoadResult.Page(
                 data = beers,
                 prevKey = if (position == PAGING_INDEX) null else position - 1,

@@ -1,5 +1,7 @@
 package com.ishanknijhawan.tubearhai.api
 
+import com.ishanknijhawan.tubearhai.data.Beer
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -11,6 +13,6 @@ interface BeerApi {
     @GET("beers")
     suspend fun getBeers(
         @Query("page") page: Int,
-        @Query("par_page") perPage: Int
-    ): Response
+        @Query("per_page") perPage: Int
+    ): Response<List<Beer>>
 }

@@ -12,7 +12,7 @@ class BeerRepository @Inject constructor(private val beerApi: BeerApi) {
     fun getBeerPages() = Pager(
         config = PagingConfig(
             pageSize = 10,
-            maxSize = 500,
+            maxSize = 100,
             enablePlaceholders = true
         ),
         pagingSourceFactory = { BeerPaging(beerApi) }
