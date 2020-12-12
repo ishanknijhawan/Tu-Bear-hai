@@ -1,7 +1,7 @@
-package com.ishanknijhawan.tubearhai
+package com.ishanknijhawan.tubearhai.viewmodel
 
 import androidx.lifecycle.ViewModel
 
 class BeerListViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
+
 }

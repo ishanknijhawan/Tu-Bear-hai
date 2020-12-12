@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/beerListFragment"
-        android:name="com.ishanknijhawan.tubearhai.BeerListFragment"
+        android:name="com.ishanknijhawan.tubearhai.ui.BeerListFragment"
         android:label="beer_list_fragment"
         tools:layout="@layout/beer_list_fragment" />
 </navigation>
