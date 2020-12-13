@@ -7,18 +7,21 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.ishanknijhawan.tubearhai.R
 import com.ishanknijhawan.tubearhai.adapter.BeerAdapter
 import com.ishanknijhawan.tubearhai.adapter.LoadingBeerAdapter
 import com.ishanknijhawan.tubearhai.data.Beer
 import com.ishanknijhawan.tubearhai.databinding.BeerListFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.beer_list_fragment.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -31,12 +34,14 @@ class BeerListFragment : Fragment(R.layout.beer_list_fragment),
     private var _binding: BeerListFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var bitmap: Bitmap
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<NestedScrollView>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = BeerListFragmentBinding.bind(view)
         val adapter = BeerAdapter(this)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
 
         binding.apply {
             rvBeers.setHasFixedSize(true)
@@ -56,15 +61,16 @@ class BeerListFragment : Fragment(R.layout.beer_list_fragment),
         _binding = null
     }
 
-    override fun onItemClick() {
-        Toast.makeText(context, "Long press to view item details", Toast.LENGTH_SHORT).show()
-    }
-
     override fun onItemLongClick(beer: Beer) {
-
+        val detailText = setDetailText(beer)
+        tv_details.text = detailText
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     override fun onClickShare(beer: Beer) {
+
+        val detailText = setDetailText(beer)
+
         try {
             Glide.with(requireContext())
                 .asBitmap()
@@ -77,9 +83,9 @@ class BeerListFragment : Fragment(R.layout.beer_list_fragment),
                         bitmap = resource
                         try {
                             val cachePath = File(requireContext().cacheDir, "images")
-                            cachePath.mkdirs() // don't forget to make the directory
+                            cachePath.mkdirs()
                             val stream =
-                                FileOutputStream("$cachePath/image.png") // overwrites this image every time
+                                FileOutputStream("$cachePath/image.png")
                             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
                             stream.close()
                         } catch (e: IOException) {
@@ -87,22 +93,24 @@ class BeerListFragment : Fragment(R.layout.beer_list_fragment),
                         }
                         val imagePath = File(requireContext().cacheDir, "images")
                         val newFile = File(imagePath, "image.png")
-                        val contentUri =
+                        val imageUri =
                             FileProvider.getUriForFile(
                                 requireContext(),
                                 "${getString(R.string.appId)}.provider",
                                 newFile
                             )
-                        if (contentUri != null) {
-                            val shareIntent = Intent()
-                            shareIntent.action = Intent.ACTION_SEND
-                            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                            shareIntent.setDataAndType(
-                                contentUri,
-                                requireContext().contentResolver.getType(contentUri)
+                        if (imageUri != null) {
+                            val intent = Intent()
+                            intent.action = Intent.ACTION_SEND
+                            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            intent.setDataAndType(
+                                imageUri,
+                                requireContext().contentResolver.getType(imageUri)
                             )
-                            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
-                            startActivity(Intent.createChooser(shareIntent, "Choose an app"))
+                            intent.putExtra(Intent.EXTRA_STREAM, imageUri)
+                            intent.putExtra(Intent.EXTRA_TEXT, detailText)
+                            intent.type = "*/*"
+                            startActivity(Intent.createChooser(intent, "Choose an app"))
                         }
                     }
 
@@ -112,6 +120,36 @@ class BeerListFragment : Fragment(R.layout.beer_list_fragment),
         } catch (e: IOException) {
             Toast.makeText(context, "Error sharing the image", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun setDetailText(beer: Beer): String {
+        var maltString = ""
+        beer.ingredients.malt.map { malt -> maltString += "${malt.name} (${malt.amount.value} ${malt.amount.unit}), " }
+
+        var hopsString = ""
+        beer.ingredients.hops.map { hops -> hopsString += "${hops.name} (${hops.amount.value} ${hops.amount.unit}), " }
+
+        var foodPairing = ""
+        beer.foodPairing.map { food -> foodPairing += "$food, " }
+
+        return """
+            ${beer.name}: ${beer.description}
+            
+            ● Food Pairs:
+            $foodPairing
+            ● pH: ${beer.ph} 
+            ● attenuation level: ${beer.attenuationLevel}
+            ● Boil Volume: ${beer.boilVolume.value} ${beer.boilVolume.unit}
+            ● Ingredients: 
+                ● Malt
+                $maltString
+                ● Hops
+                $hopsString
+                ● Yeast
+                ${beer.ingredients.yeast}
+            ● Brewer Tips: ${beer.brewersTips}
+            ● Contributed By: ${beer.contributedBy}
+        """.trimIndent()
     }
 
 }

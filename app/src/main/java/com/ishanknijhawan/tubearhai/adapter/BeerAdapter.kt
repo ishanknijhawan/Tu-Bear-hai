@@ -31,16 +31,6 @@ class BeerAdapter(private val listener: OnBeerItemClickListener) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {
-            binding.root.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val item = getItem(position)
-                    if (item != null) {
-                        listener.onItemClick()
-                    }
-                }
-            }
-
             binding.root.setOnLongClickListener {
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
@@ -78,7 +68,6 @@ class BeerAdapter(private val listener: OnBeerItemClickListener) :
     }
 
     interface OnBeerItemClickListener {
-        fun onItemClick()
         fun onItemLongClick(beer: Beer)
         fun onClickShare(beer: Beer)
     }
