@@ -74,13 +74,13 @@ class BeerListFragment : Fragment(R.layout.beer_list_fragment),
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
                     vibrator.vibrate(
                         VibrationEffect.createOneShot(
-                            10,
+                            15,
                             VibrationEffect.DEFAULT_AMPLITUDE
                         )
                     )
                 }
                 else -> {
-                    vibrator.vibrate(10)
+                    vibrator.vibrate(20)
                 }
             }
         }

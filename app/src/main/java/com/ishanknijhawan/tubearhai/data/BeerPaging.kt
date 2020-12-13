@@ -14,13 +14,8 @@ class BeerPaging(private val beerApi: BeerApi) :
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Beer> {
         val position = params.key ?: PAGING_INDEX
         return try {
-            Log.d("GSON", "coming here Yo!!")
-
             val response = beerApi.getBeers(position, params.loadSize)
             val beers = response.body()!!
-
-            Log.d("GSON", "json result is $response")
-            Log.d("GSON", "result is $beers")
 
             LoadResult.Page(
                 data = beers,
