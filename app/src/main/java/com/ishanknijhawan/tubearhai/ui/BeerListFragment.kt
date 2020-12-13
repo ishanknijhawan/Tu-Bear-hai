@@ -1,11 +1,16 @@
 package com.ishanknijhawan.tubearhai.ui
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.FileProvider
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
@@ -25,6 +30,7 @@ import kotlinx.android.synthetic.main.beer_list_fragment.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+
 
 @AndroidEntryPoint
 class BeerListFragment : Fragment(R.layout.beer_list_fragment),
@@ -52,6 +58,9 @@ class BeerListFragment : Fragment(R.layout.beer_list_fragment),
         }
 
         mViewModel.beers.observe(viewLifecycleOwner, Observer {
+            if (it == null) {
+                tv_no_results.visibility = View.VISIBLE
+            }
             adapter.submitData(viewLifecycleOwner.lifecycle, it)
         })
     }
@@ -62,6 +71,30 @@ class BeerListFragment : Fragment(R.layout.beer_list_fragment),
     }
 
     override fun onItemLongClick(beer: Beer) {
+        val vibrator = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (vibrator.hasVibrator()) {
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                    vibrator.vibrate(
+                        VibrationEffect.createOneShot(
+                            25,
+                            VibrationEffect.EFFECT_CLICK
+                        )
+                    )
+                }
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
+                    vibrator.vibrate(
+                        VibrationEffect.createOneShot(
+                            25,
+                            VibrationEffect.DEFAULT_AMPLITUDE
+                        )
+                    )
+                }
+                else -> {
+                    vibrator.vibrate(25)
+                }
+            }
+        }
         val detailText = setDetailText(beer)
         tv_details.text = detailText
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
