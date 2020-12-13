@@ -58,9 +58,6 @@ class BeerListFragment : Fragment(R.layout.beer_list_fragment),
         }
 
         mViewModel.beers.observe(viewLifecycleOwner, Observer {
-            if (it == null) {
-                tv_no_results.visibility = View.VISIBLE
-            }
             adapter.submitData(viewLifecycleOwner.lifecycle, it)
         })
     }
@@ -74,24 +71,16 @@ class BeerListFragment : Fragment(R.layout.beer_list_fragment),
         val vibrator = requireContext().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (vibrator.hasVibrator()) {
             when {
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-                    vibrator.vibrate(
-                        VibrationEffect.createOneShot(
-                            25,
-                            VibrationEffect.EFFECT_CLICK
-                        )
-                    )
-                }
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
                     vibrator.vibrate(
                         VibrationEffect.createOneShot(
-                            25,
+                            10,
                             VibrationEffect.DEFAULT_AMPLITUDE
                         )
                     )
                 }
                 else -> {
-                    vibrator.vibrate(25)
+                    vibrator.vibrate(10)
                 }
             }
         }
