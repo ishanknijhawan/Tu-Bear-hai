@@ -3,6 +3,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:padding="0dp"
+        android:background="@drawable/round_bg"
         android:layout_width="match_parent"
         android:layout_height="250dp">
 
@@ -44,7 +46,8 @@
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:textColor="#fff"
-                android:textSize="20sp"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 tools:text="Beer name" />
 
             <TextView
@@ -55,17 +58,18 @@
                 android:gravity="center_vertical"
                 android:maxLines="1"
                 android:textColor="#fff"
-                android:textSize="20sp"
+                android:textSize="15sp"
                 tools:text="This is tag name" />
 
         </LinearLayout>
 
         <ImageButton
             android:id="@+id/btn_share"
+            android:padding="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/image_view"
-            android:layout_margin="24dp"
+            android:layout_margin="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/share_content_description"
             android:ellipsize="end"

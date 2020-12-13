@@ -13,6 +13,7 @@ import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ishanknijhawan.tubearhai.R
 import com.ishanknijhawan.tubearhai.adapter.BeerAdapter
+import com.ishanknijhawan.tubearhai.adapter.LoadingBeerAdapter
 import com.ishanknijhawan.tubearhai.data.Beer
 import com.ishanknijhawan.tubearhai.databinding.BeerListFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,10 +33,11 @@ class BeerListFragment : Fragment(R.layout.beer_list_fragment) {
 
         binding.apply {
             rvBeers.setHasFixedSize(true)
-            rvBeers.adapter = adapter
+            rvBeers.adapter = adapter.withLoadStateHeaderAndFooter(
+                header = LoadingBeerAdapter {adapter.retry()},
+                footer = LoadingBeerAdapter {adapter.retry()}
+            )
         }
-
-        //Log.d("GSON", "beerzz value is ${mViewModel.beerss}")
 
         mViewModel.beers.observe(viewLifecycleOwner, Observer {
             Log.d("GSON", "coming here with data $it")

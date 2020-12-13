@@ -11,7 +11,7 @@ import javax.inject.Singleton
 class BeerRepository @Inject constructor(private val beerApi: BeerApi) {
     fun getBeerPages() = Pager(
         config = PagingConfig(
-            pageSize = 10,
+            pageSize = 4,
             maxSize = 100,
             enablePlaceholders = true
         ),
