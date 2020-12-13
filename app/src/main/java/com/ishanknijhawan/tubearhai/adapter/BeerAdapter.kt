@@ -11,8 +11,58 @@ import com.ishanknijhawan.tubearhai.R
 import com.ishanknijhawan.tubearhai.data.Beer
 import com.ishanknijhawan.tubearhai.databinding.BeerItemBinding
 
-class BeerAdapter : PagingDataAdapter<Beer, BeerAdapter.ViewHolder>(PHOTO_COMPARITOR) {
-    class ViewHolder(private val binding: BeerItemBinding) : RecyclerView.ViewHolder(binding.root) {
+class BeerAdapter(private val listener: OnBeerItemClickListener) :
+    PagingDataAdapter<Beer, BeerAdapter.ViewHolder>(PHOTO_COMPARITOR) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = BeerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
+    }
+
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val currentItem = getItem(position)
+        if (currentItem != null) {
+            holder.bind(currentItem)
+        }
+    }
+
+    inner class ViewHolder(private val binding: BeerItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.root.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val item = getItem(position)
+                    if (item != null) {
+                        listener.onItemClick()
+                    }
+                }
+            }
+
+            binding.root.setOnLongClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val item = getItem(position)
+                    if (item != null) {
+                        listener.onItemLongClick(item)
+                    }
+                }
+                return@setOnLongClickListener false
+            }
+
+            binding.btnShare.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val item = getItem(position)
+                    if (item != null) {
+                        listener.onClickShare(item)
+                    }
+                }
+            }
+        }
+
         fun bind(beer: Beer) {
             binding.apply {
                 Glide.with(itemView).load(beer.imageUrl)
@@ -27,17 +77,10 @@ class BeerAdapter : PagingDataAdapter<Beer, BeerAdapter.ViewHolder>(PHOTO_COMPAR
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = BeerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
-    }
-
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val currentItem = getItem(position)
-        if(currentItem != null) {
-            holder.bind(currentItem)
-        }
+    interface OnBeerItemClickListener {
+        fun onItemClick()
+        fun onItemLongClick(beer: Beer)
+        fun onClickShare(beer: Beer)
     }
 
     companion object {
