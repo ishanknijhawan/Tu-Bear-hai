@@ -12,10 +12,12 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.FileProvider
+import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.paging.LoadState
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -51,15 +53,38 @@ class BeerListFragment : Fragment(R.layout.beer_list_fragment),
 
         binding.apply {
             rvBeers.setHasFixedSize(true)
+            rvBeers.itemAnimator = null
             rvBeers.adapter = adapter.withLoadStateHeaderAndFooter(
                 header = LoadingBeerAdapter { adapter.retry() },
                 footer = LoadingBeerAdapter { adapter.retry() }
             )
+            btnRetryFragment.setOnClickListener {
+                adapter.retry()
+            }
         }
 
         mViewModel.beers.observe(viewLifecycleOwner, Observer {
             adapter.submitData(viewLifecycleOwner.lifecycle, it)
         })
+
+        adapter.addLoadStateListener { loadState ->
+            binding.apply {
+                progressp.isVisible = loadState.source.refresh is LoadState.Loading
+                rvBeers.isVisible = loadState.source.refresh is LoadState.NotLoading
+                btnRetryFragment.isVisible = loadState.source.refresh is LoadState.Error
+                tvNoResultsFragment.isVisible = loadState.source.refresh is LoadState.Error
+
+                // empty view
+                if (loadState.source.refresh is LoadState.NotLoading &&
+                    loadState.append.endOfPaginationReached &&
+                    adapter.itemCount < 1) {
+                    rvBeers.isVisible = false
+                    tvNoResultsFragment.isVisible = true
+                } else {
+                    tvNoResults.isVisible = false
+                }
+            }
+        }
     }
 
     override fun onDestroy() {
